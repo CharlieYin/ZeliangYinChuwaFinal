@@ -89,4 +89,18 @@ public class UserDto {
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
+
+    @Override
+    public String toString() {
+        return "UserDto{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", password='" + password + '\'' +
+                ", shipAddr='" + shipAddr + '\'' +
+                ", billAddr='" + billAddr + '\'' +
+                ", paymentMethod=" + paymentMethod +
+                '}';
+    }
 }
