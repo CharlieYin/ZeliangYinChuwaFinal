@@ -12,3 +12,5 @@ CREATE USER 'admin'@'%' IDENTIFIED BY 'admin';
 GRANT ALL PRIVILEGES ON eshop.* TO 'admin'@'%';
 FLUSH PRIVILEGES;
 ```
+### MongoDB
+Install MongoDB

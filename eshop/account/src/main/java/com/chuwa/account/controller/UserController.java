@@ -63,7 +63,7 @@ public class UserController {
 
         logger.info("Deleted user (" + email + ") successfully!");
 
-        return new ResponseEntity<>("Deleted user(" + email + ") successfully.", HttpStatus.OK);
+        return new ResponseEntity<>("Deleted user (" + email + ") successfully!", HttpStatus.OK);
     }
 
 }
