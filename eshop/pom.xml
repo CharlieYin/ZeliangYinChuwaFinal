@@ -42,4 +42,10 @@
         </plugins>
     </build>
 
+    <modules>
+        <module>account</module>
+        <module>auth</module>
+        <module>item</module>
+    </modules>
+
 </project>

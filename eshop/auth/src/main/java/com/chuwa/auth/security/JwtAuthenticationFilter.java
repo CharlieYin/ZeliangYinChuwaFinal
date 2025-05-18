@@ -14,17 +14,22 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.List;
 
 @Component
-@Order(-1)
-public class JwtAuthenticationFilter implements GlobalFilter {
+@Order(0)
+public class JwtAuthenticationFilter implements WebFilter {
 
     @Autowired
     private JwtTokenProvider tokenProvider;
+
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
     private static final List<String> openApi = List.of("/api/v1/auth/login", "/api/v1/auth/signup");
 
@@ -65,10 +70,8 @@ public class JwtAuthenticationFilter implements GlobalFilter {
     }
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        System.out.println(1111);
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String path = exchange.getRequest().getPath().toString();
-        System.out.println(path);
 
         if (openApi.stream().anyMatch(path::startsWith)) {
             return chain.filter(exchange);
@@ -76,10 +79,21 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 
         String token = getJWTfromRequest(exchange.getRequest());
         if (token != null && tokenProvider.validateToken(token)) {
-            return chain.filter(exchange);
+            String username = tokenProvider.getUsernameFromJWT(token);
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+            if (userDetails != null) {
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities()
+                );
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                return chain.filter(exchange);
+            }
+            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            return exchange.getResponse().setComplete();
         }
 
         exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
         return exchange.getResponse().setComplete();
     }
+
 }
