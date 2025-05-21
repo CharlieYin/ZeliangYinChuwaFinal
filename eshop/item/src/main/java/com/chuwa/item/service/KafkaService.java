@@ -34,10 +34,8 @@ public class KafkaService {
         logger.info("Received record (key: " + record.key() + ", value: " + record.value() + ").");
         String id = record.key();
         Map<String, Object> map = objectMapper.readValue(record.value(), Map.class);
-
         int count = (int) map.get("count");
         String orderId = (String) map.get("orderId");
-
         Item item = itemRepository.findById(id).orElse(null);
         if (item == null) {
             logger.error("Item id is wrong (" + id + ").");

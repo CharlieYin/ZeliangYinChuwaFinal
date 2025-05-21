@@ -16,17 +16,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class KafkaService {
-    @Value("${kafka.provide.topic.name}")
-    private String provideTopic;
     @Autowired
     private OrderRepository orderRepository;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
     private static final Logger logger = LoggerFactory.getLogger(KafkaService.class);
     @KafkaListener(topics = "${kafka.consume.topic.name}", groupId = "${spring.kafka.consumer.group-id}")
-    public void listen(ConsumerRecord<String, String> record) throws JsonProcessingException {
+    public void listen(ConsumerRecord<String, String> record) {
         logger.info("Received record (key: " + record.key() + ", value: " + record.value() + ").");
         String id = record.key();
         int count = Integer.parseInt(record.value());
