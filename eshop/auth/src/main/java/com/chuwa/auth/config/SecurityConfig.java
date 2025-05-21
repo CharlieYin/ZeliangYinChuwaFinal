@@ -34,6 +34,8 @@ public class SecurityConfig {
                         .uri("http://localhost:8081"))
                 .route("item", r -> r.path("/api/v1/items/**")
                         .uri("http://localhost:8082"))
+                .route("item", r -> r.path("/api/v1/orders/**")
+                        .uri("http://localhost:8083"))
                 .build();
     }
 }
